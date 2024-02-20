@@ -877,7 +877,7 @@ fi
 sort -u < "${TMPDIR}"/board-info.txt > "${OUTDIR}"/board-info.txt
 
 # set variables
-files=$(find "$(pwd)"/system "$(pwd)"/system/system "$(pwd)"/vendor "$(pwd)"/*product -maxdepth 1 -type f -name "build*.prop" 2>/dev/null | sort -u | gawk '{print $NF}'); if [[ -n "$files" ]]; then echo "Matching build*.prop files found. Proceeding with push..."; else echo "No system/vendor/product build*.prop found. Proceeding with push, but with a warning."; exit 1;fi
+[[ $(find "$(pwd)"/system "$(pwd)"/system/system "$(pwd)"/vendor "$(pwd)"/*product -maxdepth 1 -type f -name "build*.prop" 2>/dev/null | sort -u | gawk '{print $NF}') ]] || { printf "No system/vendor/product build*.prop found, pushing cancelled.\n" && exit 1; } || true
 
 flavor=$(grep -m1 -oP "(?<=^ro.build.flavor=).*" -hs {system,system/system,vendor}/build*.prop)
 [[ -z "${flavor}" ]] && flavor=$(grep -m1 -oP "(?<=^ro.vendor.build.flavor=).*" -hs vendor/build*.prop)
